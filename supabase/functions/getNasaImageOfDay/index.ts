@@ -59,9 +59,8 @@ serve(async (req) => {
     // Create Supabase client with service role
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Parse query parameters to get the date
-    const url = new URL(req.url)
-    const date = url.searchParams.get('date')
+    // Parse request body to get the date
+    const { date } = await req.json()
     
     // Validate date format (YYYY-MM-DD)
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/
@@ -94,14 +93,43 @@ serve(async (req) => {
 
     // Fetch from NASA APOD API
     const nasaApiUrl = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}&date=${date}`
+    console.log(`[NASA] Fetching image for date: ${date}`)
     const nasaResponse = await fetch(nasaApiUrl)
     
     if (!nasaResponse.ok) {
       const errorText = await nasaResponse.text()
+      console.error(`[NASA] API error for date ${date}: ${nasaResponse.status} - ${errorText}`)
+      
+      // Parse the NASA error response
+      let nasaError;
+      try {
+        nasaError = JSON.parse(errorText);
+      } catch (e) {
+        nasaError = { msg: errorText };
+      }
+      
+      // Check if it's a "No data available" error (404)
+      if (nasaResponse.status === 404 && errorText.includes('No data available')) {
+        console.log(`[NASA] No data available for date: ${date}`)
+        return new Response(
+          JSON.stringify({ 
+            error: nasaError.msg || 'No data available for this date',
+            errorCode: 'NASA_NO_DATA',
+            date: date 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 404 
+          }
+        )
+      }
+      
+      // For other errors, throw as before
       throw new Error(`NASA API error: ${nasaResponse.status} - ${errorText}`)
     }
 
     const nasaData: NasaApodResponse = await nasaResponse.json()
+    console.log(`[NASA] Successfully fetched ${nasaData.media_type} for ${date}: ${nasaData.title}`)
 
     // Only download and store if it's an image (not video)
     let storagePath: string | undefined
@@ -188,8 +216,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400 
@@ -203,7 +232,9 @@ serve(async (req) => {
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
   2. Make an HTTP request:
 
-  curl -i --location --request GET 'http://127.0.0.1:54321/functions/v1/getNasaImageOfDay?date=2024-10-05' \
-    --header 'Authorization: Bearer YOUR_ANON_KEY'
+  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/getNasaImageOfDay' \
+    --header 'Authorization: Bearer YOUR_ANON_KEY' \
+    --header 'Content-Type: application/json' \
+    --data '{"date":"2024-10-05"}'
 
 */

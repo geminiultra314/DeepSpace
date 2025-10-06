@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  NasaApod: undefined;
   Auth: undefined;
   Main: undefined;
 };
