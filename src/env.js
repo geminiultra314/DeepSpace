@@ -1,3 +1,4 @@
+// Supabase Configuration
 export const SupabaseUrl = 'https://qoocfiinxowjcluqlamr.supabase.co';
 
 export const SupabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvb2NmaWlueG93amNsdXFsYW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNzg1MjUsImV4cCI6MjA3NDk1NDUyNX0.s8elPRwrQXJTODYY4ZdknD6DHNNwKhRQD_aWVte4E0E';

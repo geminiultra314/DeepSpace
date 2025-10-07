@@ -4,11 +4,11 @@ import {
   FunctionsHttpError,
   FunctionsRelayError,
 } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SupabaseUrl, SupabaseAnonKey } from "../env";
 
-const supabaseUrl = SUPABASE_URL;
-const supabaseAnonKey = SUPABASE_ANON_KEY;
+const supabaseUrl = SupabaseUrl;
+const supabaseAnonKey = SupabaseAnonKey;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
