@@ -10,6 +10,9 @@ import { SupabaseUrl, SupabaseAnonKey } from "../env";
 const supabaseUrl = SupabaseUrl;
 const supabaseAnonKey = SupabaseAnonKey;
 
+console.log('[Supabase] Initializing with URL:', supabaseUrl);
+console.log('[Supabase] Anon Key length:', supabaseAnonKey?.length);
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,
@@ -17,7 +20,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: false,
   },
-});
+  });
 
 // Types for NASA Image data
 export interface ImageDetails {
