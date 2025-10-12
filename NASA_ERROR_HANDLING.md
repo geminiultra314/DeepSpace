@@ -138,7 +138,7 @@ const loadImageForDate = async (date: Date, retryCount = 0) => {
 
 ### Stop Conditions:
 1. **Success**: Found available image
-2. **Max Retries**: Tried 10 days back
+2. **Max Retries**: Tried 20 days back
 3. **Date Limit**: Reached MAX_DAYS_BACK (50 days)
 
 ## Error Messages
@@ -181,7 +181,7 @@ const loadImageForDate = async (date: Date, retryCount = 0) => {
 - Detailed console logs for debugging
 
 ### 4. **Performance**
-- Stops after 10 retries (prevents excessive API calls)
+- Stops after 20 retries (prevents excessive API calls)
 - Each retry is logged
 - Failed preloads don't affect main flow
 
@@ -209,7 +209,7 @@ Result: Retried 2 times, success
 Request: 2025-10-06
 All dates from 10-06 to 09-26: Not available
 Expected: Error message "No NASA images available for the last 10 days"
-Result: Stops after 10 retries
+Result: Stops after 20 retries
 ```
 
 ### Test Case 4: Network Error

@@ -21,7 +21,7 @@ import { getImage, preloadImage } from '../services/imageCache';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAX_DAYS_BACK = 50;
-const MAX_RETRY_DAYS = 10;
+const MAX_RETRY_DAYS = 20;
 
 // Helper function to format date as YYYY-MM-DD
 function formatDate(date: Date): string {
