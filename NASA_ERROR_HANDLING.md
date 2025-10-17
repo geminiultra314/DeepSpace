@@ -226,7 +226,7 @@ Result: Only NASA_NO_DATA triggers retry
 
 ```typescript
 // In NasaApodScreen.tsx
-const MAX_RETRY_DAYS = 10;  // Change to retry more/fewer days
+const MAX_RETRY_DAYS = 20;  // Change to retry more/fewer days
 const MAX_DAYS_BACK = 50;   // Change historical limit
 ```
 
