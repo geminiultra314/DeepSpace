@@ -91,10 +91,40 @@ serve(async (req) => {
       )
     }
 
-    // Fetch from NASA APOD API
+    // Fetch from NASA APOD API with timeout
     const nasaApiUrl = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}&date=${date}`
     console.log(`[NASA] Fetching image for date: ${date}`)
-    const nasaResponse = await fetch(nasaApiUrl)
+    
+    // Create abort controller for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 3000) // 3 second timeout
+    
+    let nasaResponse
+    try {
+      nasaResponse = await fetch(nasaApiUrl, { signal: controller.signal })
+      clearTimeout(timeoutId)
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      
+      // Check if error is due to timeout
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+        console.error(`[NASA] Request timeout for date ${date}`)
+        return new Response(
+          JSON.stringify({ 
+            error: 'API Timeout',
+            errorCode: 'NASA_NO_DATA',
+            date: date 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 408 
+          }
+        )
+      }
+      
+      // Re-throw other fetch errors
+      throw fetchError
+    }
     
     if (!nasaResponse.ok) {
       const errorText = await nasaResponse.text()
